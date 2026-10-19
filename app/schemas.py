@@ -36,4 +36,11 @@ class UserResponse(BaseModel):
     email: str
 
     model_config = ConfigDict(from_attributes=True)
+#=============================  SCHEMA RECOMMENDATION  ==============================
+
+class PopularMovieResponse(BaseModel):
+    id: int
+    title: str
+    avg_rating: float
+    num_ratings: int
 #===================================================================================
