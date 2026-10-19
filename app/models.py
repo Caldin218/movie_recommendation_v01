@@ -8,25 +8,28 @@ class Movie(Base):
     __tablename__ = "movies"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
-    title: Mapped[str] = mapped_column(String(255))
-
+    title: Mapped[str] = mapped_column(String(255), nullable=False)
+    genres: Mapped[str | None] = mapped_column(String(255))
+    
     ratings = relationship(
         "Rating", 
         back_populates="movie",
-        cascade="all, delete"
+        cascade="all, delete",
+        passive_deletes=True
     )
 
 class User(Base):
     __tablename__ = "users"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
-    email: Mapped[str] = mapped_column(String(255))
-    password_hash: Mapped[str] = mapped_column(String(255))
+    email: Mapped[str] = mapped_column(String(255), unique=True, nullable=False)
+    password_hash: Mapped[str] = mapped_column(String(255), nullable=False)
 
     ratings = relationship(
         "Rating",
          back_populates="user",
-         cascade="all, delete"
+         cascade="all, delete",
+         passive_deletes=True
         )
 
 class Rating(Base):
