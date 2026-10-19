@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 from app.database import get_db
 from app.models import Movie
@@ -7,8 +7,12 @@ from app.schemas import MovieCreate, MovieResponse
 router = APIRouter(prefix="/movies", tags=["Movies"])
 
 @router.get("", response_model=list[MovieResponse])
-def get_movies(db: Session = Depends(get_db)):
-    return db.query(Movie).all()
+def get_movies(
+    skip: int = 0,
+    limit: int = Query(20, ge=1, le=100),
+    db: Session = Depends(get_db)
+):
+    return db.query(Movie).order_by(Movie.id).offset(skip).limit(limit).all()
 
 @router.get("/{id}", response_model=MovieResponse)
 def get_movie_by_id(id: int, db: Session = Depends(get_db)):

@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 from app.schemas import RatingCreate, RatingResponse, RatingUpdate
 from app.database import get_db
 from sqlalchemy.orm import Session
@@ -10,8 +10,12 @@ router = APIRouter(
 )
 
 @router.get("", response_model=list[RatingResponse])
-def get_ratings(db: Session = Depends(get_db)):
-    return db.query(Rating).all()
+def get_ratings(
+    skip: int = 0,
+    limit: int = Query(20, ge=1, le=100),
+    db: Session = Depends(get_db)
+):
+    return db.query(Rating).order_by(Rating.id).offset(skip).limit(limit).all()
 
 @router.post("", response_model= RatingResponse)
 def create_rating(rating: RatingCreate, db: Session = Depends(get_db)):
