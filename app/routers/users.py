@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.exc import IntegrityError
 from app.models import User
 from app.schemas import UserCreate, UserResponse
@@ -11,8 +11,12 @@ router = APIRouter(
 )
 
 @router.get("", response_model= list[UserResponse])
-def get_users(db: Session = Depends(get_db)):
-    return db.query(User).all()
+def get_users(
+    skip: int = 0,
+    limit: int = Query(20, ge=1, le=100),
+    db: Session = Depends(get_db)
+):
+    return db.query(User).order_by(User.id).offset(skip).limit(limit).all()
 
 @router.get("/{id}", response_model= UserResponse)
 def get_user_by_id(id: int, db: Session = Depends(get_db)):
