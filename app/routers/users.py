@@ -21,10 +21,6 @@ def get_user_by_id(id: int, db: Session = Depends(get_db)):
 
     if existing_user:
 
-        for r in existing_user.ratings:
-
-            print("các rating của user này:", r.rating)
-
         return existing_user
 
     raise HTTPException(status_code=404,  detail="User not found")
